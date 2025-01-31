@@ -1,0 +1,44 @@
+from pdf2image import convert_from_path
+import base64
+import os
+import shutil
+import tempfile
+
+
+def pdf_view(self, PDF_file):
+    object_counter = 1
+    pdf_img = ""
+    temp_folder = tempfile.gettempdir()
+    img_folder = os.path.join(temp_folder, 'viper_pdf_extracts')
+
+    # Confirm the dump path
+    if not os.path.exists(img_folder):
+        try:
+            os.makedirs(img_folder)
+        except Exception as e:
+            self.log('error', f"Unable to create directory at {img_folder}: {e}")
+            return
+
+    # Convert PDF to images
+    try:
+        images = convert_from_path(PDF_file, dpi=200, output_folder=img_folder, fmt='jpeg')
+    except Exception as e:
+        self.log('error', f"Failed to convert PDF to images: {e}")
+        shutil.rmtree(img_folder)
+        return
+
+    for image in images:
+        # Save image file
+        out_img = os.path.join(img_folder, f"{object_counter}_pdf.jpg")
+        image.save(out_img, "JPEG")
+        object_counter += 1
+
+    # Base64 encode images and log them
+    for image_file in os.listdir(img_folder):
+        with open(os.path.join(img_folder, image_file), "rb") as img_file:
+            encoded_string = base64.b64encode(img_file.read()).decode('utf-8')
+            pdf_img = f'<div><img alt="Embedded Image" src="data:image/jpeg;base64,{encoded_string}" /></div>'
+            self.log('info', f"<pre>{pdf_img}</pre>")
+
+    # Clean up the temp folder
+    shutil.rmtree(img_folder)
