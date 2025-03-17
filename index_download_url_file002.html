@@ -1,0 +1,19 @@
+<div class="card">
+    <div class="card-header">
+        <h5>URL Download</h5>
+    </div>
+    <div class="card-body">
+        <form id="urlDownloadForm" method="POST" action="{% url 'download_url' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="urlInput">Enter URL:</label>
+                <input type="text" class="form-control" id="urlInput" name="url" placeholder="Enter URL">
+            </div>
+            <div class="form-group">
+                <label for="tagsInput">Tags (Optional):</label>
+                <input type="text" class="form-control" id="tagsInput" name="tags" placeholder="Enter tags, comma-separated">
+            </div>
+            <button type="submit" class="btn btn-primary">Run</button>
+        </form>
+    </div>
+</div>
