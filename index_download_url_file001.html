@@ -1,0 +1,33 @@
+<div class="card">
+    <div class="card-header">
+        <h5>URL Download</h5>
+    </div>
+    <div class="card-body">
+        <form id="urlDownloadForm">
+            <div class="form-group">
+                <label for="urlInput">Enter URL:</label>
+                <input type="text" class="form-control" id="urlInput" name="url" placeholder="Enter URL">
+            </div>
+            <button type="button" class="btn btn-primary" onclick="downloadURL()">Run</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function downloadURL() {
+    let url = document.getElementById('urlInput').value;
+    if (!url) {
+        alert("Please enter a URL.");
+        return;
+    }
+
+    fetch('/download_url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: url })
+    })
+    .then(response => response.json())
+    .then(data => alert(data.message))
+    .catch(error => console.error('Error:', error));
+}
+</script>
