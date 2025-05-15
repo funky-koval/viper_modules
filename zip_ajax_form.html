@@ -1,0 +1,25 @@
+<script>
+  $("#zipsubmit").submit(function (event) {
+    $.ajax({
+      url: "{% url 'zip-extract' project=project %}",  // We'll define this view in Django later
+      type: 'post',
+      dataType: 'html',
+      data: $("#zipsubmit").serialize(),
+      beforeSend: function () {
+        var target = document.getElementById('spin_loader');
+        var spinner = new Spinner(opts).spin(target);
+        $(target).data('spinner', spinner);
+      },
+      complete: function () {
+        $("#spin_loader").data('spinner').stop();
+      },
+      success: function (data) {
+        $("#zipresult").html(data);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("ZIP error:", textStatus, errorThrown);
+        $("#zipresult").html("<p class='text-danger'>Something went wrong.</p>");
+      }
+    });
+  });
+</script>
